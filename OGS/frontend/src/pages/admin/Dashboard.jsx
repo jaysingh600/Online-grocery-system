@@ -1,57 +1,7 @@
 import React from 'react';
 import { FiUsers, FiShoppingBag, FiDollarSign, FiActivity } from 'react-icons/fi';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Line, Bar } from 'react-chartjs-2';
-import CountUp from 'react-countup';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
 
 const Dashboard = () => {
-  const lineChartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-    datasets: [
-      {
-        label: 'Sales Revenue',
-        data: [6500, 5900, 8000, 8100, 5600, 9500, 11000],
-        borderColor: '#10B981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        fill: true,
-        tension: 0.4,
-      },
-    ],
-  };
-
-  const barChartData = {
-    labels: ['Vegetables', 'Fruits', 'Dairy', 'Snacks', 'Beverages'],
-    datasets: [
-      {
-        label: 'Top Categories',
-        data: [120, 190, 80, 150, 100],
-        backgroundColor: '#F97316',
-        borderRadius: 4,
-      },
-    ],
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -70,7 +20,7 @@ const Dashboard = () => {
           <div>
             <p className="text-sm text-gray-500 font-medium">Total Revenue</p>
             <h3 className="text-2xl font-bold text-gray-800">
-              ₹<CountUp end={125000} separator="," duration={2.5} />
+              ₹125,000
             </h3>
           </div>
         </div>
@@ -82,7 +32,7 @@ const Dashboard = () => {
           <div>
             <p className="text-sm text-gray-500 font-medium">Total Orders</p>
             <h3 className="text-2xl font-bold text-gray-800">
-              <CountUp end={845} duration={2} />
+              845
             </h3>
           </div>
         </div>
@@ -94,7 +44,7 @@ const Dashboard = () => {
           <div>
             <p className="text-sm text-gray-500 font-medium">Total Users</p>
             <h3 className="text-2xl font-bold text-gray-800">
-              <CountUp end={1200} duration={2} />
+              1,200
             </h3>
           </div>
         </div>
@@ -106,7 +56,7 @@ const Dashboard = () => {
           <div>
             <p className="text-sm text-gray-500 font-medium">Conversion Rate</p>
             <h3 className="text-2xl font-bold text-gray-800">
-              <CountUp end={4.8} decimals={1} duration={2} />%
+              4.8%
             </h3>
           </div>
         </div>
@@ -116,14 +66,14 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h2 className="text-lg font-bold text-gray-800 mb-4">Revenue Trend</h2>
-          <div className="h-72">
-            <Line data={lineChartData} options={{ maintainAspectRatio: false }} />
+          <div className="h-72 flex items-center justify-center bg-gray-50 rounded-lg border border-dashed border-gray-200 text-gray-400">
+            Chart Placeholder
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <h2 className="text-lg font-bold text-gray-800 mb-4">Sales by Category</h2>
-          <div className="h-72">
-            <Bar data={barChartData} options={{ maintainAspectRatio: false }} />
+          <div className="h-72 flex items-center justify-center bg-gray-50 rounded-lg border border-dashed border-gray-200 text-gray-400">
+            Chart Placeholder
           </div>
         </div>
       </div>

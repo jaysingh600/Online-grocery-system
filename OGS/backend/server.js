@@ -11,13 +11,23 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(cors());
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: false }));
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 import authRoutes from './routes/auth.routes.js';
 import productRoutes from './routes/product.routes.js';
 import categoryRoutes from './routes/category.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import userRoutes from './routes/user.routes.js';
+import deliveryRoutes from './routes/delivery.routes.js';
+
+// Serve uploads folder statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -25,6 +35,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/deliveries', deliveryRoutes);
 
 app.get('/', (req, res) => {
   res.send('FreshMart API is running...');

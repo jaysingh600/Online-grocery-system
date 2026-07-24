@@ -22,10 +22,10 @@ export const createCategory = async (req, res) => {
     let image = {};
 
     if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer, 'freshmart/categories');
+      const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
       image = {
-        url: result.secure_url,
-        public_id: result.public_id,
+        url: imageUrl,
+        public_id: req.file.filename,
       };
     }
 
@@ -42,6 +42,50 @@ export const createCategory = async (req, res) => {
   }
 };
 
+// @desc    Update a category
+// @route   PUT /api/categories/:id
+// @access  Private/Admin
+export const updateCategory = async (req, res) => {
+  try {
+    const { name, icon } = req.body;
+    const category = await Category.findById(req.params.id);
+
+    if (category) {
+      category.name = name || category.name;
+      category.icon = icon || category.icon;
+
+      if (req.file) {
+        // Delete old file
+        if (category.image && category.image.public_id) {
+          try {
+            const fs = await import('fs');
+            const path = await import('path');
+            const filePath = path.join(process.cwd(), 'uploads', category.image.public_id);
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+        category.image = {
+          url: imageUrl,
+          public_id: req.file.filename,
+        };
+      }
+
+      const updatedCategory = await category.save();
+      res.json(updatedCategory);
+    } else {
+      res.status(404).json({ message: 'Category not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Delete a category
 // @route   DELETE /api/categories/:id
 // @access  Private/Admin
@@ -51,7 +95,16 @@ export const deleteCategory = async (req, res) => {
 
     if (category) {
       if (category.image && category.image.public_id) {
-        await deleteFromCloudinary(category.image.public_id);
+        try {
+          const fs = await import('fs');
+          const path = await import('path');
+          const filePath = path.join(process.cwd(), 'uploads', category.image.public_id);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        } catch (e) {
+          console.error(e);
+        }
       }
       await category.deleteOne();
       res.json({ message: 'Category removed' });

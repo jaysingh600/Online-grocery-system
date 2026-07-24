@@ -1,10 +1,10 @@
 import React from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { FiHome, FiUsers, FiBox, FiList, FiSettings, FiLogOut, FiMenu } from 'react-icons/fi';
+import { FiHome, FiList, FiLogOut, FiMenu } from 'react-icons/fi';
 import { logout, reset } from '../features/authSlice';
 
-const AdminLayout = () => {
+const DeliveryLayout = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -15,13 +15,13 @@ const AdminLayout = () => {
     navigate('/login');
   };
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== 'delivery') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-red-500 mb-4">Access Denied</h1>
-          <p className="text-gray-600 mb-6">You do not have permission to view this page.</p>
-          <Link to="/" className="btn-primary">Return Home</Link>
+          <p className="text-gray-600 mb-6">You do not have permission to view this page. This area is for Delivery Personnel only.</p>
+          <Link to="/" className="btn-primary bg-primary-500 text-white px-6 py-2 rounded-lg">Return Home</Link>
         </div>
       </div>
     );
@@ -32,39 +32,20 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-dark text-white flex-shrink-0 hidden md:flex flex-col">
         <div className="h-16 flex items-center px-6 border-b border-gray-700">
-          <h1 className="text-2xl font-bold text-primary">Fresh<span className="text-secondary">Mart</span> Admin</h1>
+          <h1 className="text-2xl font-bold text-primary">Fresh<span className="text-secondary">Mart</span></h1>
+          <span className="ml-2 text-xs bg-primary-500/20 text-primary-300 px-2 py-1 rounded">Delivery</span>
         </div>
         
         <nav className="flex-1 overflow-y-auto py-4">
           <ul className="space-y-1">
             <li>
-              <Link to="/admin" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+              <Link to="/delivery" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
                 <FiHome className="h-5 w-5 mr-3" /> Dashboard
               </Link>
             </li>
             <li>
-              <Link to="/admin/products" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <FiBox className="h-5 w-5 mr-3" /> Products
-              </Link>
-            </li>
-            <li>
-              <Link to="/admin/categories" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <FiList className="h-5 w-5 mr-3" /> Categories
-              </Link>
-            </li>
-            <li>
-              <Link to="/admin/orders" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <FiList className="h-5 w-5 mr-3" /> Orders
-              </Link>
-            </li>
-            <li>
-              <Link to="/admin/users" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <FiUsers className="h-5 w-5 mr-3" /> Users
-              </Link>
-            </li>
-            <li>
-              <Link to="/admin/settings" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
-                <FiSettings className="h-5 w-5 mr-3" /> Settings
+              <Link to="/delivery/orders" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                <FiList className="h-5 w-5 mr-3" /> My Deliveries
               </Link>
             </li>
           </ul>
@@ -77,7 +58,7 @@ const AdminLayout = () => {
             </div>
             <div>
               <p className="text-sm font-medium">{user.name}</p>
-              <p className="text-xs text-gray-400">Administrator</p>
+              <p className="text-xs text-gray-400">Delivery Agent</p>
             </div>
           </div>
           <button onClick={onLogout} className="w-full flex items-center justify-center px-4 py-2 bg-gray-800 hover:bg-red-500 text-white rounded-lg transition-colors">
@@ -107,4 +88,4 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout;
+export default DeliveryLayout;

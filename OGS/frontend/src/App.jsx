@@ -9,12 +9,20 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
+import ProductsManagement from './pages/admin/ProductsManagement';
+import CategoriesManagement from './pages/admin/CategoriesManagement';
+import OrdersManagement from './pages/admin/OrdersManagement';
+import UsersManagement from './pages/admin/UsersManagement';
+import DeliveryLayout from './layouts/DeliveryLayout';
+import DeliveryDashboard from './pages/delivery/DeliveryDashboard';
 import ProfileLayout from './layouts/ProfileLayout';
 import ProfileDashboard from './pages/profile/ProfileDashboard';
 import PersonalInfo from './pages/profile/PersonalInfo';
 import Addresses from './pages/profile/Addresses';
 import MyOrders from './pages/profile/MyOrders';
 import Settings from './pages/profile/Settings';
+
+import Invoice from './pages/Invoice';
 
 function App() {
   return (
@@ -27,6 +35,7 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="invoice/:id" element={<Invoice />} />
           
           {/* User Profile Routes */}
           <Route path="profile" element={<ProfileLayout />}>
@@ -42,6 +51,16 @@ function App() {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
+          <Route path="products" element={<ProductsManagement />} />
+          <Route path="categories" element={<CategoriesManagement />} />
+          <Route path="orders" element={<OrdersManagement />} />
+          <Route path="users" element={<UsersManagement />} />
+        </Route>
+
+        {/* Delivery Routes */}
+        <Route path="/delivery" element={<DeliveryLayout />}>
+          <Route index element={<DeliveryDashboard />} />
+          <Route path="orders" element={<DeliveryDashboard />} />
         </Route>
       </Routes>
     </Router>

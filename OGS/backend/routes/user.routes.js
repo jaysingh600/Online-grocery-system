@@ -5,11 +5,17 @@ import {
   changePassword,
   addAddress,
   deleteAddress,
+  getUsers,
+  updateUserRole,
+  deleteUser,
 } from '../controllers/user.controller.js';
-import { protect } from '../middlewares/auth.middleware.js';
+import { protect, admin } from '../middlewares/auth.middleware.js';
 import { upload } from '../middlewares/upload.middleware.js';
 
 const router = express.Router();
+
+router.route('/')
+  .get(protect, admin, getUsers);
 
 router.route('/profile')
   .put(protect, updateUserProfile);
@@ -25,5 +31,11 @@ router.route('/addresses')
 
 router.route('/addresses/:id')
   .delete(protect, deleteAddress);
+
+router.route('/:id')
+  .delete(protect, admin, deleteUser);
+
+router.route('/:id/role')
+  .put(protect, admin, updateUserRole);
 
 export default router;

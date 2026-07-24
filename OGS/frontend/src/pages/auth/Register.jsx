@@ -18,7 +18,13 @@ const Register = () => {
       toast.error(message);
     }
     if (isSuccess || user) {
-      navigate('/');
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else if (user.role === 'delivery') {
+        navigate('/delivery');
+      } else {
+        navigate('/');
+      }
     }
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);

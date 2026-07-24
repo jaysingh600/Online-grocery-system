@@ -2,6 +2,7 @@ import express from 'express';
 import {
   getCategories,
   createCategory,
+  updateCategory,
   deleteCategory,
 } from '../controllers/category.controller.js';
 import { protect, admin } from '../middlewares/auth.middleware.js';
@@ -14,6 +15,7 @@ router.route('/')
   .post(protect, admin, upload.single('image'), createCategory);
 
 router.route('/:id')
+  .put(protect, admin, upload.single('image'), updateCategory)
   .delete(protect, admin, deleteCategory);
 
 export default router;

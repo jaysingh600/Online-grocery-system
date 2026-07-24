@@ -1,8 +1,21 @@
 import multer from 'multer';
 import path from 'path';
 
-// Use memory storage for Cloudinary upload
-const storage = multer.memoryStorage();
+import fs from 'fs';
+
+// Use disk storage to save files locally
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    const dir = 'uploads/';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    cb(null, dir);
+  },
+  filename(req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();

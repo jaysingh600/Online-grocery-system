@@ -39,10 +39,12 @@ export const createProduct = async (req, res) => {
 
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        const result = await uploadToCloudinary(file.buffer, 'freshmart/products');
+        // file.path contains the local path, e.g. "uploads\image.jpg"
+        // Convert to a web-accessible URL
+        const imageUrl = `http://localhost:5000/uploads/${file.filename}`;
         images.push({
-          url: result.secure_url,
-          public_id: result.public_id,
+          url: imageUrl,
+          public_id: file.filename, // Use filename as public_id for local deletion
         });
       }
     }
@@ -69,6 +71,67 @@ export const createProduct = async (req, res) => {
   }
 };
 
+// @desc    Update a product
+// @route   PUT /api/products/:id
+// @access  Private/Admin
+export const updateProduct = async (req, res) => {
+  try {
+    const { name, description, price, category, brand, stock, discountPrice } = req.body;
+
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+      product.name = name || product.name;
+      product.description = description || product.description;
+      product.price = price || product.price;
+      product.category = category || product.category;
+      product.brand = brand || product.brand;
+      product.stock = stock || product.stock;
+      product.discountPrice = discountPrice || product.discountPrice;
+      
+      product.discountPercentage = product.discountPrice && product.price 
+        ? Math.round(((product.price - product.discountPrice) / product.price) * 100) 
+        : 0;
+
+      if (req.files && req.files.length > 0) {
+        // Delete old local images
+        if (product.images && product.images.length > 0) {
+          for (const img of product.images) {
+            try {
+              const fs = await import('fs');
+              const path = await import('path');
+              const filePath = path.join(process.cwd(), 'uploads', img.public_id);
+              if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+              }
+            } catch (e) {
+              console.error('Error deleting local image:', e);
+            }
+          }
+        }
+        
+        // Add new images
+        let images = [];
+        for (const file of req.files) {
+          const imageUrl = `http://localhost:5000/uploads/${file.filename}`;
+          images.push({
+            url: imageUrl,
+            public_id: file.filename,
+          });
+        }
+        product.images = images;
+      }
+
+      const updatedProduct = await product.save();
+      res.json(updatedProduct);
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Delete a product
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
@@ -79,7 +142,17 @@ export const deleteProduct = async (req, res) => {
     if (product) {
       if (product.images && product.images.length > 0) {
         for (const img of product.images) {
-          await deleteFromCloudinary(img.public_id);
+          try {
+            // Delete local file if it exists
+            const fs = await import('fs');
+            const path = await import('path');
+            const filePath = path.join(process.cwd(), 'uploads', img.public_id);
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          } catch (e) {
+            console.error('Error deleting local image:', e);
+          }
         }
       }
       await product.deleteOne();
