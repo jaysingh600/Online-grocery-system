@@ -13,6 +13,8 @@ import ProductsManagement from './pages/admin/ProductsManagement';
 import CategoriesManagement from './pages/admin/CategoriesManagement';
 import OrdersManagement from './pages/admin/OrdersManagement';
 import UsersManagement from './pages/admin/UsersManagement';
+import OffersManagement from './pages/admin/OffersManagement';
+import CouponsManagement from './pages/admin/CouponsManagement';
 import DeliveryLayout from './layouts/DeliveryLayout';
 import DeliveryDashboard from './pages/delivery/DeliveryDashboard';
 import ProfileLayout from './layouts/ProfileLayout';
@@ -23,6 +25,12 @@ import MyOrders from './pages/profile/MyOrders';
 import Settings from './pages/profile/Settings';
 
 import Invoice from './pages/Invoice';
+
+import Contact from './pages/cms/Contact';
+import About from './pages/cms/About';
+import FAQ from './pages/cms/FAQ';
+import PrivacyPolicy from './pages/cms/PrivacyPolicy';
+import Terms from './pages/cms/Terms';
 
 function App() {
   return (
@@ -36,6 +44,13 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="invoice/:id" element={<Invoice />} />
+          
+          {/* CMS Routes */}
+          <Route path="contact" element={<Contact />} />
+          <Route path="about" element={<About />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<Terms />} />
           
           {/* User Profile Routes */}
           <Route path="profile" element={<ProfileLayout />}>
@@ -53,6 +68,8 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="products" element={<ProductsManagement />} />
           <Route path="categories" element={<CategoriesManagement />} />
+          <Route path="offers" element={<OffersManagement />} />
+          <Route path="coupons" element={<CouponsManagement />} />
           <Route path="orders" element={<OrdersManagement />} />
           <Route path="users" element={<UsersManagement />} />
         </Route>

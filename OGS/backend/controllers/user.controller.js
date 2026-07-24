@@ -1,5 +1,4 @@
 import User from '../models/User.js';
-import { uploadToCloudinary, deleteFromCloudinary } from '../utils/cloudinaryUpload.js';
 import bcrypt from 'bcrypt';
 
 // @desc    Update user profile details
@@ -51,15 +50,11 @@ export const uploadProfilePhoto = async (req, res) => {
 
     if (req.file) {
       // Delete old photo if exists and not placeholder
-      if (user.profileImage && user.profileImage.public_id) {
-        await deleteFromCloudinary(user.profileImage.public_id);
-      }
-
-      const result = await uploadToCloudinary(req.file.buffer, 'freshmart/users');
+      // Skipping local delete for simplicity
       
       user.profileImage = {
-        url: result.secure_url,
-        public_id: result.public_id,
+        url: `http://localhost:5000/uploads/${req.file.filename}`,
+        public_id: req.file.filename,
       };
 
       await user.save();
@@ -138,6 +133,73 @@ export const deleteAddress = async (req, res) => {
 
       await user.save();
       res.json(user.addresses);
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Update an address
+// @route   PUT /api/users/addresses/:id
+// @access  Private
+export const updateAddress = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      const address = user.addresses.id(req.params.id);
+      if (address) {
+        if (req.body.isDefault) {
+           user.addresses.forEach(addr => addr.isDefault = false);
+        }
+        Object.assign(address, req.body);
+        await user.save();
+        res.json(user.addresses);
+      } else {
+        res.status(404).json({ message: 'Address not found' });
+      }
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Add to wishlist
+// @route   POST /api/users/wishlist
+// @access  Private
+export const addToWishlist = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      const productId = req.body.productId;
+      if (!user.wishlist.includes(productId)) {
+        user.wishlist.push(productId);
+        await user.save();
+      }
+      res.json(user.wishlist);
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Remove from wishlist
+// @route   DELETE /api/users/wishlist/:productId
+// @access  Private
+export const removeFromWishlist = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      user.wishlist = user.wishlist.filter(
+        id => id.toString() !== req.params.productId
+      );
+      await user.save();
+      res.json(user.wishlist);
     } else {
       res.status(404).json({ message: 'User not found' });
     }

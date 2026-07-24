@@ -1,20 +1,20 @@
 import multer from 'multer';
 import path from 'path';
-
 import fs from 'fs';
 
-// Use disk storage to save files locally
+// Ensure uploads directory exists
+const uploadDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    const dir = 'uploads/';
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    cb(null, dir);
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
   },
-  filename(req, file, cb) {
-    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
-  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
 });
 
 const fileFilter = (req, file, cb) => {

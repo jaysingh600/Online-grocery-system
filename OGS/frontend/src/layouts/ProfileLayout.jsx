@@ -148,4 +148,12 @@ const ProfileLayout = () => {
   );
 };
 
-export default ProfileLayout;
+import ErrorBoundary from '../components/ErrorBoundary';
+
+const ProfileLayoutWrapped = () => (
+  <ErrorBoundary>
+    <ProfileLayout />
+  </ErrorBoundary>
+);
+
+export default ProfileLayoutWrapped;

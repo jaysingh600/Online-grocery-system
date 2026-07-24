@@ -4,10 +4,13 @@ import {
   uploadProfilePhoto,
   changePassword,
   addAddress,
+  updateAddress,
   deleteAddress,
   getUsers,
   updateUserRole,
   deleteUser,
+  addToWishlist,
+  removeFromWishlist,
 } from '../controllers/user.controller.js';
 import { protect, admin } from '../middlewares/auth.middleware.js';
 import { upload } from '../middlewares/upload.middleware.js';
@@ -30,7 +33,14 @@ router.route('/addresses')
   .post(protect, addAddress);
 
 router.route('/addresses/:id')
+  .put(protect, updateAddress)
   .delete(protect, deleteAddress);
+
+router.route('/wishlist')
+  .post(protect, addToWishlist);
+
+router.route('/wishlist/:productId')
+  .delete(protect, removeFromWishlist);
 
 router.route('/:id')
   .delete(protect, admin, deleteUser);

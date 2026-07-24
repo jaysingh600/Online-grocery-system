@@ -53,6 +53,16 @@ const AdminLayout = () => {
               </Link>
             </li>
             <li>
+              <Link to="/admin/offers" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                <FiBox className="h-5 w-5 mr-3" /> Offers
+              </Link>
+            </li>
+            <li>
+              <Link to="/admin/coupons" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
+                <FiList className="h-5 w-5 mr-3" /> Coupons
+              </Link>
+            </li>
+            <li>
               <Link to="/admin/orders" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-800 hover:text-white transition-colors">
                 <FiList className="h-5 w-5 mr-3" /> Orders
               </Link>

@@ -7,6 +7,7 @@ import {
   getOrders,
   updateOrderStatus,
   deleteOrder,
+  createPaymentIntent,
 } from '../controllers/order.controller.js';
 import { protect, admin } from '../middlewares/auth.middleware.js';
 
@@ -17,6 +18,7 @@ router.route('/')
   .get(protect, admin, getOrders);
 
 router.route('/myorders').get(protect, getMyOrders);
+router.post('/create-payment-intent', protect, createPaymentIntent);
 
 router.route('/:id')
   .get(protect, getOrderById)

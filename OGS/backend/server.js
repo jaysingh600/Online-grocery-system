@@ -25,6 +25,9 @@ import categoryRoutes from './routes/category.routes.js';
 import orderRoutes from './routes/order.routes.js';
 import userRoutes from './routes/user.routes.js';
 import deliveryRoutes from './routes/delivery.routes.js';
+import offerRoutes from './routes/offer.routes.js';
+import couponRoutes from './routes/coupon.routes.js';
+import analyticsRoutes from './routes/analytics.routes.js';
 
 // Serve uploads folder statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -36,6 +39,9 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/deliveries', deliveryRoutes);
+app.use('/api/offers', offerRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.get('/', (req, res) => {
   res.send('FreshMart API is running...');

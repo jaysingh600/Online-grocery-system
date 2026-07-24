@@ -1,4 +1,7 @@
 import Order from '../models/Order.js';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -33,6 +36,33 @@ export const addOrderItems = async (req, res) => {
 
     const createdOrder = await order.save();
     res.status(201).json(createdOrder);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Create Stripe Payment Intent
+// @route   POST /api/orders/create-payment-intent
+// @access  Private
+export const createPaymentIntent = async (req, res) => {
+  try {
+    const { itemsPrice, taxPrice, shippingPrice, discount } = req.body;
+    let totalAmount = (Number(itemsPrice) + Number(taxPrice) + Number(shippingPrice)) - (Number(discount) || 0);
+    // Convert to smallest currency unit (e.g., cents for USD, paise for INR)
+    const amount = Math.round(totalAmount * 100);
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: 'inr', // Change to preferred currency
+      // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
