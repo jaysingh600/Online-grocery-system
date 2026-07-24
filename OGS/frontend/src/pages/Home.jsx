@@ -22,15 +22,22 @@ const FeatureCard = ({ icon, title, description, delay }) => (
   </motion.div>
 );
 
-const CategoryCard = ({ title, color, delay }) => (
+const CategoryCard = ({ title, color, image, delay }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.9 }}
     whileInView={{ opacity: 1, scale: 1 }}
     viewport={{ once: true }}
     transition={{ duration: 0.4, delay }}
-    className={`${color} rounded-3xl p-6 h-40 flex flex-col justify-end relative overflow-hidden group cursor-pointer hover:shadow-lg transition-all`}
+    className={`${color} rounded-3xl p-6 h-48 flex flex-col justify-end relative overflow-hidden group cursor-pointer hover:shadow-lg transition-all`}
   >
-    <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 bg-white/20 rounded-full transition-transform group-hover:scale-150 duration-500"></div>
+    {/* Floating background circle */}
+    <div className="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 bg-white/30 rounded-full transition-transform group-hover:scale-150 duration-700"></div>
+    
+    {/* Category Image */}
+    <div className="absolute top-0 right-0 w-32 h-32 p-4 flex items-center justify-center">
+      <img src={image} alt={title} className="w-full h-full object-contain mix-blend-multiply drop-shadow-xl group-hover:scale-110 transition-transform duration-500" />
+    </div>
+
     <h3 className="text-xl font-bold text-gray-800 relative z-10 group-hover:-translate-y-2 transition-transform">{title}</h3>
     <Link to="/shop" className="absolute inset-0 z-20"></Link>
   </motion.div>
@@ -172,12 +179,12 @@ const Home = () => {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <CategoryCard title="Fresh Fruits" color="bg-orange-100" delay={0} />
-            <CategoryCard title="Vegetables" color="bg-green-100" delay={0.1} />
-            <CategoryCard title="Dairy & Eggs" color="bg-blue-100" delay={0.2} />
-            <CategoryCard title="Bakery" color="bg-yellow-100" delay={0.3} />
-            <CategoryCard title="Meat & Fish" color="bg-red-100" delay={0.4} />
-            <CategoryCard title="Beverages" color="bg-purple-100" delay={0.5} />
+            <CategoryCard title="Fresh Fruits" color="bg-orange-100" image="/images/cat_fruits.png" delay={0} />
+            <CategoryCard title="Vegetables" color="bg-green-100" image="/images/cat_veg.png" delay={0.1} />
+            <CategoryCard title="Dairy & Eggs" color="bg-blue-100" image="/images/cat_dairy.png" delay={0.2} />
+            <CategoryCard title="Bakery" color="bg-yellow-100" image="/images/cat_bakery.png" delay={0.3} />
+            <CategoryCard title="Meat & Fish" color="bg-red-100" image="/images/cat_meat.png" delay={0.4} />
+            <CategoryCard title="Beverages" color="bg-purple-100" image="/images/cat_beverages.png" delay={0.5} />
           </div>
         </div>
       </section>
