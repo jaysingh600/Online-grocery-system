@@ -9,6 +9,30 @@ const Addresses = () => {
   const [addresses, setAddresses] = useState(user.addresses || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const config = { headers: { Authorization: `Bearer ${user.token}` } };
+        const { data } = await axios.get('http://localhost:5000/api/auth/profile', config);
+        setAddresses(data.addresses || []);
+        
+        // Update local storage to keep it in sync
+        const updatedUser = { ...user, addresses: data.addresses };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      } catch (error) {
+        console.error('Failed to fetch profile', error);
+      } finally {
+        setFetchLoading(false);
+      }
+    };
+    if (user && user.token) {
+      fetchProfile();
+    } else {
+      setFetchLoading(false);
+    }
+  }, [user.token]);
   
   const [formData, setFormData] = useState({
     receiverName: '',
@@ -48,7 +72,8 @@ const Addresses = () => {
         receiverName: '', phone: '', houseNo: '', street: '', area: '', city: '', state: '', country: 'India', pinCode: '', addressType: 'Home', isDefault: false
       });
     } catch (error) {
-      toast.error('Failed to add address');
+      toast.error(error.response?.data?.message || 'Failed to add address');
+      console.error('Error adding address:', error.response?.data || error);
     } finally {
       setLoading(false);
     }
@@ -83,7 +108,11 @@ const Addresses = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {addresses.length === 0 ? (
+        {fetchLoading ? (
+          <div className="col-span-full text-center py-12 text-gray-500 animate-pulse">
+            Loading your addresses...
+          </div>
+        ) : addresses.length === 0 ? (
           <div className="col-span-full text-center py-12 text-gray-500">
             <MapPin className="w-12 h-12 mx-auto text-gray-300 mb-4" />
             <p>You haven't saved any addresses yet.</p>

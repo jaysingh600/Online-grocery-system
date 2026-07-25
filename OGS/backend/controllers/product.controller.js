@@ -16,7 +16,9 @@ export const getProducts = async (req, res) => {
         }
       : {};
 
-    const category = req.query.category ? { category: req.query.category } : {};
+    const category = req.query.category 
+      ? { category: { $in: req.query.category.split(',') } } 
+      : {};
     const brand = req.query.brand ? { brand: req.query.brand } : {};
     const status = req.query.status ? { status: req.query.status } : { status: 'active' };
     const isFeatured = req.query.isFeatured === 'true' ? { isFeatured: true } : {};

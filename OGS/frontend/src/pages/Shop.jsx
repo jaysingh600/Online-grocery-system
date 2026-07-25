@@ -7,7 +7,7 @@ const Shop = () => {
   const [loading, setLoading] = useState(true);
   
   const [categories, setCategories] = useState([]);
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState([]);
   const [sortOrder, setSortOrder] = useState('newest');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
@@ -31,7 +31,7 @@ const Shop = () => {
       try {
         setLoading(true);
         let url = `http://localhost:5000/api/products?pageNumber=${page}&pageSize=12&sort=${sortOrder}`;
-        if (categoryFilter) url += `&category=${categoryFilter}`;
+        if (categoryFilter.length > 0) url += `&category=${categoryFilter.join(',')}`;
         if (minPrice) url += `&minPrice=${minPrice}`;
         if (maxPrice) url += `&maxPrice=${maxPrice}`;
         
@@ -56,7 +56,7 @@ const Shop = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg font-bold text-gray-800">Filters</h2>
               <button 
-                onClick={() => { setCategoryFilter(''); setMinPrice(''); setMaxPrice(''); setSortOrder('newest'); setPage(1); }}
+                onClick={() => { setCategoryFilter([]); setMinPrice(''); setMaxPrice(''); setSortOrder('newest'); setPage(1); }}
                 className="text-sm text-primary-500 hover:underline"
               >
                 Clear All
@@ -69,14 +69,30 @@ const Shop = () => {
               <ul className="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto pr-2">
                 <li>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="radio" name="category" checked={categoryFilter === ''} onChange={() => setCategoryFilter('')} className="text-primary-600 focus:ring-primary-500" /> 
+                    <input 
+                      type="checkbox" 
+                      checked={categoryFilter.length === 0} 
+                      onChange={() => setCategoryFilter([])} 
+                      className="text-primary-600 focus:ring-primary-500 rounded" 
+                    /> 
                     All Categories
                   </label>
                 </li>
                 {categories.map(cat => (
                   <li key={cat._id}>
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="radio" name="category" checked={categoryFilter === cat._id} onChange={() => setCategoryFilter(cat._id)} className="text-primary-600 focus:ring-primary-500" /> 
+                      <input 
+                        type="checkbox" 
+                        checked={categoryFilter.includes(cat._id)} 
+                        onChange={() => {
+                          if (categoryFilter.includes(cat._id)) {
+                            setCategoryFilter(categoryFilter.filter(id => id !== cat._id));
+                          } else {
+                            setCategoryFilter([...categoryFilter, cat._id]);
+                          }
+                        }} 
+                        className="text-primary-600 focus:ring-primary-500 rounded" 
+                      /> 
                       {cat.name}
                     </label>
                   </li>
@@ -140,7 +156,7 @@ const Shop = () => {
             <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
               <h2 className="text-xl font-bold text-gray-800 mb-2">No products found</h2>
               <p className="text-gray-500">Try adjusting your filters or search criteria.</p>
-              <button onClick={() => { setCategoryFilter(''); setMinPrice(''); setMaxPrice(''); setSortOrder('newest'); setPage(1); }} className="mt-4 px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
+              <button onClick={() => { setCategoryFilter([]); setMinPrice(''); setMaxPrice(''); setSortOrder('newest'); setPage(1); }} className="mt-4 px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
                 Clear Filters
               </button>
             </div>
