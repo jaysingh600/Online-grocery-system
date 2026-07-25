@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 
-const Shop = () => {
+const Shop = ({ offersOnly }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -13,6 +14,9 @@ const Shop = () => {
   const [maxPrice, setMaxPrice] = useState('');
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
+
+  const [searchParams] = useSearchParams();
+  const keyword = searchParams.get('keyword') || '';
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -31,9 +35,11 @@ const Shop = () => {
       try {
         setLoading(true);
         let url = `http://localhost:5000/api/products?pageNumber=${page}&pageSize=12&sort=${sortOrder}`;
+        if (keyword) url += `&keyword=${keyword}`;
         if (categoryFilter.length > 0) url += `&category=${categoryFilter.join(',')}`;
         if (minPrice) url += `&minPrice=${minPrice}`;
         if (maxPrice) url += `&maxPrice=${maxPrice}`;
+        if (offersOnly) url += `&hasOffer=true`;
         
         const { data } = await axios.get(url);
         setProducts(data.products || []);
@@ -45,7 +51,7 @@ const Shop = () => {
       }
     };
     fetchProducts();
-  }, [categoryFilter, sortOrder, minPrice, maxPrice, page]);
+  }, [categoryFilter, sortOrder, minPrice, maxPrice, page, offersOnly, keyword]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -127,7 +133,7 @@ const Shop = () => {
         {/* Product Grid */}
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-            <h1 className="text-2xl font-bold text-gray-800">All Products</h1>
+            <h1 className="text-2xl font-bold text-gray-800">{offersOnly ? 'Special Offers' : 'All Products'}</h1>
             <select 
               value={sortOrder}
               onChange={e => setSortOrder(e.target.value)}
@@ -154,7 +160,9 @@ const Shop = () => {
             </div>
           ) : products.length === 0 ? (
             <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-              <h2 className="text-xl font-bold text-gray-800 mb-2">No products found</h2>
+              <h2 className="text-xl font-bold text-gray-800 mb-2">
+                {keyword ? "Product is not available" : "No products found"}
+              </h2>
               <p className="text-gray-500">Try adjusting your filters or search criteria.</p>
               <button onClick={() => { setCategoryFilter([]); setMinPrice(''); setMaxPrice(''); setSortOrder('newest'); setPage(1); }} className="mt-4 px-6 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
                 Clear Filters

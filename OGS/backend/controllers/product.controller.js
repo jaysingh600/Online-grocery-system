@@ -23,12 +23,15 @@ export const getProducts = async (req, res) => {
     const status = req.query.status ? { status: req.query.status } : { status: 'active' };
     const isFeatured = req.query.isFeatured === 'true' ? { isFeatured: true } : {};
     
+    // Offers filter
+    const hasOffer = req.query.hasOffer === 'true' ? { discountPercentage: { $gt: 0 } } : {};
+
     // Price filter
     const minPrice = req.query.minPrice ? Number(req.query.minPrice) : 0;
     const maxPrice = req.query.maxPrice ? Number(req.query.maxPrice) : 99999999;
     const priceFilter = { price: { $gte: minPrice, $lte: maxPrice } };
 
-    const query = { ...keyword, ...category, ...brand, ...status, ...isFeatured, ...priceFilter };
+    const query = { ...keyword, ...category, ...brand, ...status, ...isFeatured, ...hasOffer, ...priceFilter };
 
     // Sorting
     let sort = { createdAt: -1 }; // default sort
