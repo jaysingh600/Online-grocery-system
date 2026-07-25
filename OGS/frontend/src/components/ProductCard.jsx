@@ -1,14 +1,21 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../features/cartSlice';
 import toast from 'react-hot-toast';
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   const handleAddToCart = () => {
+    if (!user) {
+      toast.error('Please login first to add products to the cart');
+      navigate('/login');
+      return;
+    }
     dispatch(addToCart({ ...product, qty: 1 }));
     toast.success('Added to cart!');
   };

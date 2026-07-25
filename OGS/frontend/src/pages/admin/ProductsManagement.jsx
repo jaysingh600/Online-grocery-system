@@ -20,7 +20,7 @@ const ProductsManagement = () => {
   const [editingId, setEditingId] = useState(null);
   
   const [newProduct, setNewProduct] = useState({
-    name: '', sku: '', category: '', price: '', discountPrice: '', stock: '', description: '', brand: '', status: 'active', isFeatured: false
+    name: '', sku: '', category: '', price: '', discountPrice: '', stock: '', unit: 'each', description: '', brand: '', status: 'active', isFeatured: false
   });
   const [imageFiles, setImageFiles] = useState([]);
 
@@ -68,6 +68,7 @@ const ProductsManagement = () => {
     formData.append('stock', newProduct.stock);
     formData.append('description', newProduct.description);
     formData.append('brand', newProduct.brand);
+    formData.append('unit', newProduct.unit);
     formData.append('status', newProduct.status);
     formData.append('isFeatured', newProduct.isFeatured);
     
@@ -104,7 +105,7 @@ const ProductsManagement = () => {
   const openAddModal = () => {
     setIsEditMode(false);
     setEditingId(null);
-    setNewProduct({ name: '', sku: '', category: '', price: '', discountPrice: '', stock: '', description: '', brand: '', status: 'active', isFeatured: false });
+    setNewProduct({ name: '', sku: '', category: '', price: '', discountPrice: '', stock: '', unit: 'each', description: '', brand: '', status: 'active', isFeatured: false });
     setImageFiles([]);
     setShowAddModal(true);
   };
@@ -119,6 +120,7 @@ const ProductsManagement = () => {
       price: product.price,
       discountPrice: product.discountPrice || '',
       stock: product.stock,
+      unit: product.unit || 'each',
       description: product.description,
       brand: product.brand,
       status: product.status,
@@ -132,7 +134,7 @@ const ProductsManagement = () => {
     setShowAddModal(false);
     setIsEditMode(false);
     setEditingId(null);
-    setNewProduct({ name: '', sku: '', category: '', price: '', discountPrice: '', stock: '', description: '', brand: '', status: 'active', isFeatured: false });
+    setNewProduct({ name: '', sku: '', category: '', price: '', discountPrice: '', stock: '', unit: 'each', description: '', brand: '', status: 'active', isFeatured: false });
     setImageFiles([]);
   };
 
@@ -315,6 +317,19 @@ const ProductsManagement = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Stock *</label>
                   <input type="number" required min="0" className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary" 
                     value={newProduct.stock} onChange={e => setNewProduct({...newProduct, stock: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
+                  <select required className="w-full border border-gray-300 rounded-lg p-2.5 bg-white focus:ring-primary focus:border-primary"
+                    value={newProduct.unit} onChange={e => setNewProduct({...newProduct, unit: e.target.value})}>
+                    <option value="each">Piece (Each)</option>
+                    <option value="kg">Kilogram (kg)</option>
+                    <option value="g">Gram (g)</option>
+                    <option value="L">Liter (L)</option>
+                    <option value="ml">Milliliter (ml)</option>
+                    <option value="dozen">Dozen</option>
+                    <option value="pack">Pack</option>
+                  </select>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex-1">

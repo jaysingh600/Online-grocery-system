@@ -1,4 +1,5 @@
 import Order from '../models/Order.js';
+import Product from '../models/Product.js';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -21,6 +22,19 @@ export const addOrderItems = async (req, res) => {
     if (orderItems && orderItems.length === 0) {
       res.status(400).json({ message: 'No order items' });
       return;
+    }
+
+    // Verify stock and decrement
+    for (const item of orderItems) {
+      const product = await Product.findById(item.product || item._id);
+      if (product) {
+        if (product.stock < item.qty) {
+          res.status(400).json({ message: `Insufficient stock for ${product.name}` });
+          return;
+        }
+        product.stock -= item.qty;
+        await product.save();
+      }
     }
 
     const order = new Order({

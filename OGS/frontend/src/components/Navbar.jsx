@@ -7,6 +7,9 @@ import { FiShoppingCart, FiUser, FiLogOut } from 'react-icons/fi';
 const Navbar = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
+
+  const cartItemCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
   const onLogout = () => {
     dispatch(logout());
@@ -41,7 +44,9 @@ const Navbar = () => {
           <div className="flex items-center space-x-6">
             <Link to="/cart" className="text-gray-600 hover:text-primary relative">
               <FiShoppingCart className="h-6 w-6" />
-              <span className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+              <span className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {cartItemCount}
+              </span>
             </Link>
             
             {user ? (

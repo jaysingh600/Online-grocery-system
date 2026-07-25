@@ -73,6 +73,11 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please add a brand'],
     },
+    unit: {
+      type: String,
+      required: [true, 'Please specify the unit (e.g. kg, g, each, L)'],
+      default: 'each',
+    },
     images: [
       {
         url: { type: String, required: true },

@@ -76,7 +76,7 @@ export const getProductById = async (req, res) => {
 // @access  Private/Admin
 export const createProduct = async (req, res) => {
   try {
-    const { name, sku, description, price, category, brand, stock, discountPrice, status, isFeatured } = req.body;
+    const { name, sku, description, price, category, brand, unit, stock, discountPrice, status, isFeatured } = req.body;
     let images = [];
 
     if (req.files && req.files.length > 0) {
@@ -97,6 +97,7 @@ export const createProduct = async (req, res) => {
       description,
       category,
       brand,
+      unit: unit || 'each',
       stock,
       images,
       discountPrice,
@@ -118,7 +119,7 @@ export const createProduct = async (req, res) => {
 // @access  Private/Admin
 export const updateProduct = async (req, res) => {
   try {
-    const { name, sku, description, price, category, brand, stock, discountPrice, status, isFeatured } = req.body;
+    const { name, sku, description, price, category, brand, unit, stock, discountPrice, status, isFeatured } = req.body;
 
     const product = await Product.findById(req.params.id);
 
@@ -133,6 +134,7 @@ export const updateProduct = async (req, res) => {
       product.price = price || product.price;
       product.category = category || product.category;
       product.brand = brand || product.brand;
+      product.unit = unit || product.unit;
       product.stock = stock !== undefined ? stock : product.stock;
       product.discountPrice = discountPrice !== undefined ? discountPrice : product.discountPrice;
       product.status = status || product.status;
