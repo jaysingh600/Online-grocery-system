@@ -15,10 +15,41 @@ const Checkout = () => {
     street: '', city: '', state: '', zipCode: '', country: ''
   });
   const [paymentMethod, setPaymentMethod] = useState('COD');
+  
+  const [couponCodeInput, setCouponCodeInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.qty * (item.discountPrice || item.price), 0);
   const deliveryCharge = subtotal > 500 ? 0 : 50;
-  const total = subtotal + deliveryCharge;
+  const discountAmount = appliedCoupon ? appliedCoupon.discount : 0;
+  const total = Math.max(0, subtotal + deliveryCharge - discountAmount);
+
+  const handleApplyCoupon = async (e) => {
+    e.preventDefault();
+    if (!couponCodeInput.trim()) return;
+    
+    try {
+      setApplyingCoupon(true);
+      setCouponError('');
+      const config = { headers: { Authorization: `Bearer ${user.token}` } };
+      const { data } = await axios.post('http://localhost:5000/api/coupons/validate', { code: couponCodeInput }, config);
+      
+      setAppliedCoupon({ code: data.code, discount: data.discount });
+      setCouponCodeInput('');
+      toast.success(data.message);
+    } catch (error) {
+      setCouponError(error.response?.data?.message || 'Invalid coupon');
+    } finally {
+      setApplyingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponError('');
+  };
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
@@ -139,7 +170,39 @@ const Checkout = () => {
                 <span>Delivery</span>
                 <span className="font-medium text-gray-800">{deliveryCharge === 0 ? 'Free' : `₹${deliveryCharge}`}</span>
               </div>
+              {appliedCoupon && (
+                <div className="flex justify-between text-primary">
+                  <span className="flex items-center gap-2">
+                    Discount ({appliedCoupon.code})
+                    <button onClick={removeCoupon} className="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded">Remove</button>
+                  </span>
+                  <span className="font-medium">-₹{discountAmount.toFixed(2)}</span>
+                </div>
+              )}
             </div>
+
+            {/* Coupon Section */}
+            {!appliedCoupon && (
+              <div className="mb-6">
+                <form onSubmit={handleApplyCoupon} className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="Enter Coupon Code" 
+                    value={couponCodeInput}
+                    onChange={(e) => setCouponCodeInput(e.target.value.toUpperCase())}
+                    className="flex-1 border border-gray-300 rounded-lg p-2 uppercase"
+                  />
+                  <button 
+                    type="submit" 
+                    disabled={applyingCoupon || !couponCodeInput}
+                    className="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 disabled:opacity-50 transition-colors"
+                  >
+                    Apply
+                  </button>
+                </form>
+                {couponError && <p className="text-red-500 text-xs mt-1">{couponError}</p>}
+              </div>
+            )}
             
             <div className="flex justify-between items-center mb-6">
               <span className="text-lg font-bold text-gray-800">Total</span>

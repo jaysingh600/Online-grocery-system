@@ -6,13 +6,14 @@ import toast from 'react-hot-toast';
 
 const OffersManagement = () => {
   const [offers, setOffers] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState(null);
   
   const [newOffer, setNewOffer] = useState({
-    title: '', discountPercentage: '', isActive: true, expiryDate: '', flashSale: false
+    title: '', discountPercentage: '', isActive: true, expiryDate: '', flashSale: false, applicableCategory: ''
   });
   const [imageFile, setImageFile] = useState(null);
   const { user } = useSelector((state) => state.auth);
@@ -29,8 +30,18 @@ const OffersManagement = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/categories');
+      setCategories(res.data);
+    } catch (error) {
+      console.error('Failed to fetch categories');
+    }
+  };
+
   useEffect(() => {
     fetchOffers();
+    fetchCategories();
   }, []);
 
   const handleAddOffer = async (e) => {
@@ -46,6 +57,7 @@ const OffersManagement = () => {
     formData.append('isActive', newOffer.isActive);
     formData.append('expiryDate', newOffer.expiryDate);
     formData.append('flashSale', newOffer.flashSale);
+    formData.append('applicableCategory', newOffer.applicableCategory);
     if (imageFile) {
       formData.append('banner', imageFile);
     }
@@ -69,7 +81,7 @@ const OffersManagement = () => {
   const openAddModal = () => {
     setIsEditMode(false);
     setEditingId(null);
-    setNewOffer({ title: '', discountPercentage: '', isActive: true, expiryDate: '', flashSale: false });
+    setNewOffer({ title: '', discountPercentage: '', isActive: true, expiryDate: '', flashSale: false, applicableCategory: '' });
     setImageFile(null);
     setShowAddModal(true);
   };
@@ -82,7 +94,8 @@ const OffersManagement = () => {
       discountPercentage: offer.discountPercentage,
       isActive: offer.isActive,
       expiryDate: offer.expiryDate.split('T')[0],
-      flashSale: offer.flashSale
+      flashSale: offer.flashSale,
+      applicableCategory: offer.applicableCategory?._id || ''
     });
     setImageFile(null);
     setShowAddModal(true);
@@ -110,7 +123,7 @@ const OffersManagement = () => {
     <div className="space-y-6 relative">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">Offers & Banners</h1>
-        <button onClick={openAddModal} className="bg-primary-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-600 transition-colors">
+        <button onClick={openAddModal} className="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600 transition-colors">
           <FiPlus /> Add Offer
         </button>
       </div>
@@ -125,6 +138,7 @@ const OffersManagement = () => {
                 <tr className="bg-gray-50 border-b border-gray-100">
                   <th className="p-4 font-semibold text-gray-600">Banner</th>
                   <th className="p-4 font-semibold text-gray-600">Title</th>
+                  <th className="p-4 font-semibold text-gray-600">Category</th>
                   <th className="p-4 font-semibold text-gray-600">Discount</th>
                   <th className="p-4 font-semibold text-gray-600">Expiry</th>
                   <th className="p-4 font-semibold text-gray-600">Status</th>
@@ -144,6 +158,9 @@ const OffersManagement = () => {
                     <td className="p-4 text-gray-800 font-medium">
                       {offer.title}
                       {offer.flashSale && <span className="ml-2 px-2 py-0.5 rounded text-xs bg-red-100 text-red-800 font-bold">FLASH</span>}
+                    </td>
+                    <td className="p-4 text-gray-600 text-sm">
+                      {offer.applicableCategory ? offer.applicableCategory.name : 'All Categories'}
                     </td>
                     <td className="p-4 text-gray-600">{offer.discountPercentage}% OFF</td>
                     <td className="p-4 text-gray-600">{new Date(offer.expiryDate).toLocaleDateString()}</td>
@@ -179,7 +196,7 @@ const OffersManagement = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Offer Title</label>
-                  <input type="text" required className="w-full border border-gray-300 rounded-lg p-2 focus:ring-primary-500" value={newOffer.title} onChange={e => setNewOffer({...newOffer, title: e.target.value})} />
+                  <input type="text" required className="w-full border border-gray-300 rounded-lg p-2 focus:ring-primary focus:border-primary" value={newOffer.title} onChange={e => setNewOffer({...newOffer, title: e.target.value})} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -187,13 +204,22 @@ const OffersManagement = () => {
                     <input type="number" required min="0" max="100" className="w-full border border-gray-300 rounded-lg p-2" value={newOffer.discountPercentage} onChange={e => setNewOffer({...newOffer, discountPercentage: e.target.value})} />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                    <input type="date" required className="w-full border border-gray-300 rounded-lg p-2" value={newOffer.expiryDate} onChange={e => setNewOffer({...newOffer, expiryDate: e.target.value})} />
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Applicable Category</label>
+                    <select className="w-full border border-gray-300 rounded-lg p-2 bg-white" value={newOffer.applicableCategory} onChange={e => setNewOffer({...newOffer, applicableCategory: e.target.value})}>
+                      <option value="">All Categories</option>
+                      {categories.map(c => (
+                        <option key={c._id} value={c._id}>{c.name}</option>
+                      ))}
+                    </select>
                   </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                  <input type="date" required className="w-full border border-gray-300 rounded-lg p-2" value={newOffer.expiryDate} onChange={e => setNewOffer({...newOffer, expiryDate: e.target.value})} />
                 </div>
                 <div className="flex gap-6">
                   <label className="flex items-center gap-2">
-                    <input type="checkbox" checked={newOffer.isActive} onChange={e => setNewOffer({...newOffer, isActive: e.target.checked})} className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500" />
+                    <input type="checkbox" checked={newOffer.isActive} onChange={e => setNewOffer({...newOffer, isActive: e.target.checked})} className="w-4 h-4 text-primary rounded focus:ring-primary" />
                     <span>Active Status</span>
                   </label>
                   <label className="flex items-center gap-2">
@@ -208,7 +234,7 @@ const OffersManagement = () => {
               </div>
               <div className="mt-6 flex justify-end gap-3">
                 <button type="button" onClick={closeModal} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">{isEditMode ? 'Update' : 'Save'}</button>
+                <button type="submit" className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-600">{isEditMode ? 'Update' : 'Save'}</button>
               </div>
             </form>
           </div>

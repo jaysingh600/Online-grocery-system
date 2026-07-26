@@ -5,7 +5,7 @@ import Offer from '../models/Offer.js';
 // @access  Public
 export const getOffers = async (req, res) => {
   try {
-    const offers = await Offer.find({});
+    const offers = await Offer.find({}).populate('applicableCategory', 'name');
     res.json(offers);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -17,7 +17,7 @@ export const getOffers = async (req, res) => {
 // @access  Public
 export const getActiveOffers = async (req, res) => {
   try {
-    const offers = await Offer.find({ isActive: true, expiryDate: { $gte: new Date() } });
+    const offers = await Offer.find({ isActive: true, expiryDate: { $gte: new Date() } }).populate('applicableCategory', 'name');
     res.json(offers);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -29,7 +29,7 @@ export const getActiveOffers = async (req, res) => {
 // @access  Private/Admin
 export const createOffer = async (req, res) => {
   try {
-    const { title, discountPercentage, isActive, expiryDate, flashSale } = req.body;
+    const { title, discountPercentage, isActive, expiryDate, flashSale, applicableCategory } = req.body;
     let banner = { url: '', public_id: '' };
 
     if (req.file) {
@@ -48,6 +48,7 @@ export const createOffer = async (req, res) => {
       isActive: isActive === 'true' || isActive === true,
       expiryDate,
       flashSale: flashSale === 'true' || flashSale === true,
+      applicableCategory: applicableCategory || null,
     });
 
     const createdOffer = await offer.save();
@@ -62,7 +63,7 @@ export const createOffer = async (req, res) => {
 // @access  Private/Admin
 export const updateOffer = async (req, res) => {
   try {
-    const { title, discountPercentage, isActive, expiryDate, flashSale } = req.body;
+    const { title, discountPercentage, isActive, expiryDate, flashSale, applicableCategory } = req.body;
     const offer = await Offer.findById(req.params.id);
 
     if (offer) {
@@ -71,6 +72,7 @@ export const updateOffer = async (req, res) => {
       if (isActive !== undefined) offer.isActive = isActive === 'true' || isActive === true;
       offer.expiryDate = expiryDate || offer.expiryDate;
       if (flashSale !== undefined) offer.flashSale = flashSale === 'true' || flashSale === true;
+      if (applicableCategory !== undefined) offer.applicableCategory = applicableCategory === '' ? null : applicableCategory;
 
       if (req.file) {
         // Skip deletion for now

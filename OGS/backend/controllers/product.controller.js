@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import Offer from '../models/Offer.js';
 
 // @desc    Get all products (with search, filter, pagination)
 // @route   GET /api/products
@@ -23,8 +24,28 @@ export const getProducts = async (req, res) => {
     const status = req.query.status ? { status: req.query.status } : { status: 'active' };
     const isFeatured = req.query.isFeatured === 'true' ? { isFeatured: true } : {};
     
+    // Check for global active offers
+    const activeOffers = await Offer.find({ isActive: true, expiryDate: { $gte: new Date() } });
+    
+    const hasGlobalOffer = activeOffers.some(o => !o.applicableCategory);
+    const offerCategoryIds = activeOffers.filter(o => o.applicableCategory).map(o => o.applicableCategory);
+
     // Offers filter
-    const hasOffer = req.query.hasOffer === 'true' ? { discountPercentage: { $gt: 0 } } : {};
+    let hasOffer = {};
+    if (req.query.hasOffer === 'true') {
+      if (!hasGlobalOffer) {
+        if (offerCategoryIds.length > 0) {
+          hasOffer = {
+            $or: [
+              { discountPercentage: { $gt: 0 } },
+              { category: { $in: offerCategoryIds } }
+            ]
+          };
+        } else {
+          hasOffer = { discountPercentage: { $gt: 0 } };
+        }
+      }
+    }
 
     // Price filter
     const minPrice = req.query.minPrice ? Number(req.query.minPrice) : 0;
@@ -43,11 +64,32 @@ export const getProducts = async (req, res) => {
     }
 
     const count = await Product.countDocuments(query);
-    const products = await Product.find(query)
+    let products = await Product.find(query)
       .populate('category', 'name')
       .sort(sort)
       .limit(pageSize)
-      .skip(pageSize * (page - 1));
+      .skip(pageSize * (page - 1))
+      .lean();
+
+    // Apply offer discount if it's better than the product's individual discount
+    if (activeOffers.length > 0) {
+      products = products.map(product => {
+        const productDiscount = product.discountPercentage || 0;
+        
+        const applicableOffers = activeOffers.filter(o => 
+          !o.applicableCategory || 
+          o.applicableCategory.toString() === (product.category._id || product.category).toString()
+        );
+        const maxApplicableDiscount = applicableOffers.reduce((max, offer) => Math.max(max, offer.discountPercentage), 0);
+
+        if (maxApplicableDiscount > productDiscount) {
+          const discountAmount = (product.price * maxApplicableDiscount) / 100;
+          product.discountPrice = product.price - discountAmount;
+          product.discountPercentage = maxApplicableDiscount;
+        }
+        return product;
+      });
+    }
 
     res.json({
       products,
@@ -65,8 +107,23 @@ export const getProducts = async (req, res) => {
 // @access  Public
 export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate('category', 'name');
+    const product = await Product.findById(req.params.id).populate('category', 'name').lean();
     if (product) {
+      const activeOffers = await Offer.find({ isActive: true, expiryDate: { $gte: new Date() } });
+      
+      const applicableOffers = activeOffers.filter(o => 
+        !o.applicableCategory || 
+        o.applicableCategory.toString() === (product.category._id || product.category).toString()
+      );
+      const maxApplicableDiscount = applicableOffers.reduce((max, offer) => Math.max(max, offer.discountPercentage), 0);
+      
+      const productDiscount = product.discountPercentage || 0;
+      if (maxApplicableDiscount > productDiscount) {
+        const discountAmount = (product.price * maxApplicableDiscount) / 100;
+        product.discountPrice = product.price - discountAmount;
+        product.discountPercentage = maxApplicableDiscount;
+      }
+      
       res.json(product);
     } else {
       res.status(404).json({ message: 'Product not found' });

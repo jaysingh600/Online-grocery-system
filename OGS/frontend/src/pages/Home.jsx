@@ -45,18 +45,24 @@ const CategoryCard = ({ title, color, image, delay }) => (
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [activeOffers, setActiveOffers] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/products');
+        const [productsRes, offersRes] = await Promise.all([
+          axios.get('http://localhost:5000/api/products'),
+          axios.get('http://localhost:5000/api/offers/active')
+        ]);
+        
         // Get top 4 products to showcase
-        setFeaturedProducts(res.data.products?.slice(0, 4) || res.data.slice(0, 4) || []);
+        setFeaturedProducts(productsRes.data.products?.slice(0, 4) || productsRes.data.slice(0, 4) || []);
+        setActiveOffers(offersRes.data || []);
       } catch (error) {
-        console.error('Failed to fetch products', error);
+        console.error('Failed to fetch home data', error);
       }
     };
-    fetchProducts();
+    fetchData();
   }, []);
 
   return (
@@ -189,35 +195,42 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Promotional Banner */}
-      <section className="py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative rounded-[2.5rem] overflow-hidden shadow-2xl h-[400px] flex items-center"
-          >
-            <img src="/images/banner.png" alt="Summer Offer" className="absolute inset-0 w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
-            
-            <div className="relative z-10 p-10 md:p-16 max-w-2xl">
-              <span className="inline-block px-4 py-1 rounded-full bg-red-500 text-white font-bold text-sm mb-4 animate-pulse">
-                LIMITED TIME OFFER
-              </span>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
-                Get 20% Off On Your <br/> First Fresh Order
-              </h2>
-              <p className="text-gray-200 text-lg mb-8">
-                Use code <span className="font-mono bg-white/20 px-2 py-1 rounded text-white font-bold tracking-widest">FRESH20</span> at checkout.
-              </p>
-              <Link to="/shop" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-900 rounded-full font-bold text-lg hover:bg-gray-100 hover:shadow-lg transition-all">
-                Claim Offer <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      {/* Promotional Banners */}
+      {activeOffers.length > 0 && (
+        <section className="py-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+            {activeOffers.map((offer) => (
+              <motion.div 
+                key={offer._id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="relative rounded-[2.5rem] overflow-hidden shadow-2xl h-[400px] flex items-center"
+              >
+                <img src={offer.banner?.url || '/images/banner.png'} alt={offer.title} className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+                
+                <div className="relative z-10 p-10 md:p-16 max-w-2xl">
+                  {offer.flashSale && (
+                    <span className="inline-block px-4 py-1 rounded-full bg-red-500 text-white font-bold text-sm mb-4 animate-pulse">
+                      FLASH SALE
+                    </span>
+                  )}
+                  <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight">
+                    {offer.title}
+                  </h2>
+                  <p className="text-gray-200 text-2xl mb-8 font-bold">
+                    Get {offer.discountPercentage}% Off
+                  </p>
+                  <Link to="/offers" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-gray-900 rounded-full font-bold text-lg hover:bg-gray-100 hover:shadow-lg transition-all">
+                    Shop Now <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Featured Products (Preview) */}
       {featuredProducts.length > 0 && (

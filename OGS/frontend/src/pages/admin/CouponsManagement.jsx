@@ -94,7 +94,7 @@ const CouponsManagement = () => {
     <div className="space-y-6 relative">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">Coupons Management</h1>
-        <button onClick={openAddModal} className="bg-primary-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-primary-600 transition-colors">
+        <button onClick={openAddModal} className="bg-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600 transition-colors">
           <FiPlus /> Create Coupon
         </button>
       </div>
@@ -117,7 +117,7 @@ const CouponsManagement = () => {
               <tbody>
                 {coupons.map((coupon) => (
                   <tr key={coupon._id} className="border-b border-gray-50 hover:bg-gray-50/50">
-                    <td className="p-4 font-bold text-primary-600 uppercase tracking-wide">{coupon.code}</td>
+                    <td className="p-4 font-bold text-primary uppercase tracking-wide">{coupon.code}</td>
                     <td className="p-4 text-gray-800 font-medium">₹{coupon.discount}</td>
                     <td className="p-4 text-gray-600">{new Date(coupon.expiry).toLocaleDateString()}</td>
                     <td className="p-4">
@@ -167,14 +167,14 @@ const CouponsManagement = () => {
                 </div>
                 <div>
                   <label className="flex items-center gap-2">
-                    <input type="checkbox" checked={newCoupon.isActive} onChange={e => setNewCoupon({...newCoupon, isActive: e.target.checked})} className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500" />
+                    <input type="checkbox" checked={newCoupon.isActive} onChange={e => setNewCoupon({...newCoupon, isActive: e.target.checked})} className="w-4 h-4 text-primary rounded focus:ring-primary" />
                     <span className="text-sm font-medium text-gray-700">Active</span>
                   </label>
                 </div>
               </div>
               <div className="mt-6 flex justify-end gap-3">
                 <button type="button" onClick={closeModal} className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">{isEditMode ? 'Update' : 'Create'}</button>
+                <button type="submit" className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-600">{isEditMode ? 'Update' : 'Create'}</button>
               </div>
             </form>
           </div>

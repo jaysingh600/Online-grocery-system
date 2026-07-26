@@ -25,6 +25,11 @@ const offerSchema = new mongoose.Schema(
     flashSale: {
       type: Boolean,
       default: false,
+    },
+    applicableCategory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      default: null,
     }
   },
   { timestamps: true }

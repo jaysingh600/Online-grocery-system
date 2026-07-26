@@ -23,6 +23,7 @@ import ProfileDashboard from './pages/profile/ProfileDashboard';
 import PersonalInfo from './pages/profile/PersonalInfo';
 import Addresses from './pages/profile/Addresses';
 import MyOrders from './pages/profile/MyOrders';
+import OrderDetails from './pages/profile/OrderDetails';
 import Settings from './pages/profile/Settings';
 
 import Invoice from './pages/Invoice';
@@ -61,6 +62,7 @@ function App() {
             <Route path="info" element={<PersonalInfo />} />
             <Route path="addresses" element={<Addresses />} />
             <Route path="orders" element={<MyOrders />} />
+            <Route path="orders/:id" element={<OrderDetails />} />
             <Route path="settings" element={<Settings />} />
             {/* Other profile routes will go here */}
           </Route>
