@@ -19,10 +19,13 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
-  if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg' && ext !== '.webp') {
-    return cb(new Error('Only images are allowed'), false);
+  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.bmp', '.svg', '.tiff'];
+  
+  if (file.mimetype.startsWith('image/') || allowedExtensions.includes(ext)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only images are allowed'), false);
   }
-  cb(null, true);
 };
 
 export const upload = multer({

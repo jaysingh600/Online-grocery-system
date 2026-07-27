@@ -25,9 +25,7 @@ import Addresses from './pages/profile/Addresses';
 import MyOrders from './pages/profile/MyOrders';
 import OrderDetails from './pages/profile/OrderDetails';
 import Settings from './pages/profile/Settings';
-
 import Invoice from './pages/Invoice';
-
 import Contact from './pages/cms/Contact';
 import About from './pages/cms/About';
 import FAQ from './pages/cms/FAQ';

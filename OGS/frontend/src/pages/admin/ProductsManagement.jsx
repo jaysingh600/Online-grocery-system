@@ -265,15 +265,15 @@ const ProductsManagement = () => {
 
       {/* Add/Edit Product Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl flex flex-col my-8">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 sm:p-6">
+          <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[100vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col relative">
+            <div className="p-4 sm:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 sticky top-0 z-10">
               <h2 className="text-xl font-bold text-gray-800">{isEditMode ? 'Edit Product' : 'Add New Product'}</h2>
               <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 p-2 text-2xl leading-none">
                 &times;
               </button>
             </div>
-            <form onSubmit={handleAddProduct} className="p-6">
+            <form onSubmit={handleAddProduct} className="p-4 sm:p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
