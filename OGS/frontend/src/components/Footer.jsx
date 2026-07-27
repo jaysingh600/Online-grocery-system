@@ -9,7 +9,7 @@ const Footer = () => {
             <h2 className="text-2xl font-bold text-white mb-4">
               Fresh<span className="text-secondary">Mart</span>
             </h2>
-            <p className="text-sm">Fresh Grocery Delivered Fast. Quality you can trust.</p>
+            <p className="text-sm">Fresh Grocery Delivered Fast in you Door step. Quality you can trust.</p>
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
