@@ -12,7 +12,7 @@ const About = () => {
         <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1200" alt="Fresh Produce" className="w-full h-[400px] object-cover rounded-3xl shadow-lg" />
         
         <h2>Our Story</h2>
-        <p>Founded in 2026, FreshMart started with a simple idea: why should people have to compromise on the quality of their fresh produce just because they have busy lives? We partnered with local farmers and suppliers to build a supply chain that prioritizes freshness above all else.</p>
+        <p>Founded in 2026, FreshMart started with a simple idea: why should people have to compromise on the quality of their fresh produce just because they have busy lives? We partnered with local farmers and suppliers to build a supply chain that prioritizes freshness above all else and deliverd food in your Door step.</p>
         
         <h2>Our Values</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 not-prose">
