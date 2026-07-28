@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     question: "Do you deliver to my area?",
-    answer: "Currently, we deliver across major metropolitan areas. You can enter your pin code on the homepage to check if we deliver to your specific location."
+    answer: "Currently, we deliver across major metropolitan areas. You can enter your pin code on the homepage to check if we deliver to your specific location ."
   }
 ];
 
@@ -31,7 +31,7 @@ const FAQ = () => {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h1>
-        <p className="text-gray-600 text-lg">Find answers to common questions about our services.</p>
+        <p className="text-gray-600 text-lg">Find answer to common questions about our services.</p>
       </div>
 
       <div className="space-y-4">
