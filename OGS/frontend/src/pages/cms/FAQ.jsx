@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react';
 const faqs = [
   {
     question: "How long does delivery take?",
-    answer: "We offer same-day delivery for orders placed before 2 PM. Orders placed after 2 PM will be delivered the next morning."
+    answer: "We offer same-day delivery for orders placed before 2 PM and based on your location. Orders placed after 2 PM will be delivered the next morning."
   },
   {
     question: "Is there a minimum order value?",
