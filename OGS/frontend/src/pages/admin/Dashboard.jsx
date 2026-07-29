@@ -26,7 +26,7 @@ const Dashboard = () => {
   }, [user]);
 
   if (loading) {
-    return <div className="p-6 text-center text-gray-500 animate-pulse">Loading dashboard...</div>;
+    return <div className="p-6 text-center text-gray-500 animate-pulse">Loading dashboard......</div>;
   }
 
   if (!analytics) return null;
@@ -34,7 +34,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Dashboard Overviews</h1>
         <div className="text-sm text-gray-500">
           Last updated: {new Date().toLocaleDateString()}
         </div>
@@ -47,7 +47,7 @@ const Dashboard = () => {
             <FiDollarSign />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-medium">Total Revenue</p>
+            <p className="text-sm text-gray-500 font-medium">Total Revenues</p>
             <h3 className="text-2xl font-bold text-gray-800">
               ₹{analytics.totalRevenue.toLocaleString()}
             </h3>
@@ -83,7 +83,7 @@ const Dashboard = () => {
             <FiActivity />
           </div>
           <div>
-            <p className="text-sm text-gray-500 font-medium">Total Products</p>
+            <p className="text-sm text-gray-500 font-medium">Total Products </p>
             <h3 className="text-2xl font-bold text-gray-800">
               {analytics.totalProducts.toLocaleString()}
             </h3>
