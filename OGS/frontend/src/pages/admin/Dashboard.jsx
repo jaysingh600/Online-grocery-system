@@ -114,7 +114,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">Best Selling Products (By Rating)</h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Best Selling Products (By Ratings)</h2>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={analytics.bestSellers.map(p => ({ name: p.name.substring(0, 10)+'...', rating: p.rating }))}>
@@ -122,7 +122,7 @@ const Dashboard = () => {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280' }} />
                 <Tooltip cursor={{ fill: '#F3F4F6' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                <Bar dataKey="rating" fill="#8B5CF6" radius={[4, 4, 0, 0]} name="Rating" />
+                <Bar dataKey="rating" fill="#753ff1" radius={[4, 4, 0, 0]} name="Rating" />
               </BarChart>
             </ResponsiveContainer>
           </div>
