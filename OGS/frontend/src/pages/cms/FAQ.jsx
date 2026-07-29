@@ -52,10 +52,10 @@ const FAQ = () => {
       </div>
       
       <div className="mt-12 text-center p-8 bg-primary-50 rounded-3xl border border-primary-100">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">Still have questions?</h3>
-        <p className="text-gray-600 mb-6">We're here to help you 24/7.</p>
+        <h3 className="text-xl font-bold text-gray-800 mb-2">Still have questions ?</h3>
+        <p className="text-gray-600 mb-6">We are here to help you 24/7.</p>
         <a href="/contact" className="inline-block px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-600 transition-colors">
-          Contact Support
+          Contact Supports
         </a>
       </div>
     </div>
